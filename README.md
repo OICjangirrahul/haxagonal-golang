@@ -19,5 +19,5 @@
 ```
 cp config/configEx.yml config/config.yml
 docker-compose up
-docker exec -it portal-api go mod tidy
+docker exec -it api go mod tidy
 ```
