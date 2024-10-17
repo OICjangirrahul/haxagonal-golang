@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  app:
+    container_name: portal-api
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    networks:
+      - portal-net
+    depends_on:
+      redis:
+        condition: service_healthy # Wait for Redis to be healthy
+
+  redis:
+    container_name: portal-api-redis
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    volumes:
+      - "./data/redis:/data"
+    networks:
+      - portal-net
+    healthcheck: # Add health check for Redis
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
+
+networks:
+  portal-net:
