@@ -27,5 +27,37 @@ docker-compose build
 
 ```
 docker exec -it portal-api swag init -g cmd/main.go
-docker exec -it portal-api golangci-lint run
+
+
+copy below code put inside .devcontainer/devcontainer.json
+{
+  "name": "Go",
+  "dockerComposeFile": ["../docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/app",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "go.toolsManagement.checkForUpdates": "off",
+        "go.toolsManagement.autoUpdate": true,
+        "go.gopath": "/go",
+        "go.gocodeAutoBuild": true,
+        "go.formatTool": "gofmt",
+        "go.useLanguageServer": true,
+        "editor.formatOnSave": false,
+        "go.lintTool": "golangci-lint",
+        "go.lintFlags": ["--fast"],
+        "go.lintOnSave": "file",
+        "[go]": {
+          "editor.formatOnSave": true
+        }
+      },
+      "extensions": [
+        "golang.go"
+      ]
+    }
+  }
+}
+
 ```
