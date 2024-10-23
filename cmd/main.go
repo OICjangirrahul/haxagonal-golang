@@ -8,11 +8,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	docs "github.com/OICjangirrahul/haxagonal-golang/docs"
 	"github.com/OICjangirrahul/haxagonal-golang/internal"
 )
 
 func main() {
 	r := gin.Default()
+	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	config.ReadConfig()
 
@@ -23,7 +27,7 @@ func main() {
 
 	// Setup routes
 	v1.SetupRoutes(r, app.Controllers)
-
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// Start the server
 	if err := r.Run(":" + config.Cfg.Server.Port); err != nil {
 		log.Fatalf("failed to run server: %v", err)

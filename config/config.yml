@@ -1,0 +1,10 @@
+server:
+  port: ${PORT}
+
+database:
+  dsn: "${DB_DSN}"
+
+redis:
+  addr: "${REDIS_ADDR}"
+  password: "${REDIS_PASSWORD}"
+  db: 0

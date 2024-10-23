@@ -8,16 +8,24 @@
 
 ### 前提条件
 
-- [Go](https://golang.org/dl/) がインストールされていること
 - [Docker](https://www.docker.com/get-started) がインストールされていること
 - [Docker Compose](https://docs.docker.com/compose/install/) がインストールされていること
 
-### インストール手順
-
-1. step to run project
+### セットアップ対応
 
 ```
-cp config/configEx.yml config/config.yml
-docker-compose up
-docker exec -it api go mod tidy
+1. step
+cp .env.sample .env
+必要な設定url, portなど書き換え
+
+2. step
+docker-compose build
+
+```
+
+### swagger の作成手順
+
+```
+docker exec -it portal-api swag init -g cmd/main.go
+docker exec -it portal-api golangci-lint run
 ```

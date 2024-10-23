@@ -5,8 +5,8 @@ package repository
 import (
 	"context"
 
-	"github.com/OICjangirrahul/haxagonal-golang/internal/application/domain"
 	"github.com/go-redis/redis/v8"
+	"github.com/OICjangirrahul/haxagonal-golang/internal/application/domain"
 )
 
 type AuthRepository struct {

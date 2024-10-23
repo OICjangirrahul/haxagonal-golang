@@ -7,22 +7,21 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-
-type ApiError struct {
-	Status int  `json:"status"`
-	Field string `json:"field"`
-	Msg   string `json:"message"`
+type APIError struct {
+	Status int    `json:"status"`
+	Field  string `json:"field"`
+	Msg    string `json:"message"`
 }
 
 func ValidateRequest(c *gin.Context, validate *validator.Validate, model interface{}) error {
 	if err := c.ShouldBindJSON(model); err != nil {
 		if ve, ok := err.(validator.ValidationErrors); ok {
-			var errors []ApiError
+			var errors []APIError
 			for _, fe := range ve {
-				errors = append(errors, ApiError{
-					Status:  http.StatusBadRequest,
-					Field: fe.Field(),
-					Msg:   msgForTag(fe.Tag()),
+				errors = append(errors, APIError{
+					Status: http.StatusBadRequest,
+					Field:  fe.Field(),
+					Msg:    msgForTag(fe.Tag()),
 				})
 			}
 			c.JSON(http.StatusBadRequest, gin.H{"errors": errors})
@@ -36,14 +35,14 @@ func ValidateRequest(c *gin.Context, validate *validator.Validate, model interfa
 	}
 
 	if err := validate.Struct(model); err != nil {
-		var errors []ApiError
+		var errors []APIError
 		for _, fe := range err.(validator.ValidationErrors) {
-			errors = append(errors, ApiError{
+			errors = append(errors, APIError{
 				Field: fe.Field(),
 				Msg:   msgForTag(fe.Tag()),
 			})
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"status":http.StatusBadRequest,"errors": errors})
+		c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "errors": errors})
 		c.Abort()
 		return err
 	}
@@ -51,7 +50,7 @@ func ValidateRequest(c *gin.Context, validate *validator.Validate, model interfa
 	return nil
 }
 
-//後で変更
+// 後で変更
 func msgForTag(tag string) string {
 	switch tag {
 	case "required":

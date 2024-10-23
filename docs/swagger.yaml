@@ -1,0 +1,69 @@
+definitions:
+  controller.accountRequest:
+    properties:
+      password:
+        minLength: 6
+        type: string
+      username:
+        minLength: 3
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  controller.authRequest:
+    properties:
+      token:
+        minLength: 8
+        type: string
+    required:
+    - token
+    type: object
+info:
+  contact: {}
+paths:
+  /accounts:
+    post:
+      consumes:
+      - application/json
+      description: do ping
+      parameters:
+      - description: Account Info
+        in: body
+        name: account
+        required: true
+        schema:
+          $ref: '#/definitions/controller.accountRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: ping accounts
+      tags:
+      - portal-api
+  /auth/saveToken:
+    post:
+      consumes:
+      - application/json
+      description: do ping
+      parameters:
+      - description: saveToken Info
+        in: body
+        name: saveToken
+        required: true
+        schema:
+          $ref: '#/definitions/controller.authRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: ping account
+      tags:
+      - portal-api
+swagger: "2.0"

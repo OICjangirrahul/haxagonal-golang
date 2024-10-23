@@ -9,10 +9,11 @@ package internal
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/go-redis/redis/v8"
-	"github.com/OICjangirrahul/haxagonal-golang/config"
-	"github.com/OICjangirrahul/haxagonal-golang/internal/adapters/controller"
-	"github.com/OICjangirrahul/haxagonal-golang/internal/adapters/repository"
-	"github.com/OICjangirrahul/haxagonal-golang/internal/application/service"
+	"github.com/zero-mobile/user-portal-api/config"
+	"github.com/zero-mobile/user-portal-api/internal/adapters/controller"
+	"github.com/zero-mobile/user-portal-api/internal/adapters/repository"
+	"github.com/zero-mobile/user-portal-api/internal/application/domain"
+	"github.com/zero-mobile/user-portal-api/internal/application/service"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -51,7 +52,17 @@ type App struct {
 
 func NewDatabaseConnection() (*gorm.DB, error) {
 	dsn := config.Cfg.Database.DSN
-	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.AutoMigrate(&domain.Account{})
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
 }
 
 func NewValidator() *validator.Validate {

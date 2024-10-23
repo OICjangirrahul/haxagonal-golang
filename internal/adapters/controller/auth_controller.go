@@ -3,11 +3,15 @@ package controller
 import (
 	"net/http"
 
-	"github.com/OICjangirrahul/haxagonal-golang/internal/application/port/in"
-	"github.com/OICjangirrahul/haxagonal-golang/internal/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/OICjangirrahul/haxagonal-golang/internal/application/port/in"
+	"github.com/OICjangirrahul/haxagonal-golang/internal/validation"
 )
+
+type authRequest struct {
+	Token string `json:"token" binding:"required,min=8"`
+}
 
 type AuthController struct {
 	AuthInPort in.AuthInPort
@@ -16,15 +20,25 @@ type AuthController struct {
 
 func NewAuthController(authInPort in.AuthInPort, validator *validator.Validate) *AuthController {
 	return &AuthController{
-		AuthInPort: authInPort, // Use the correct field name with uppercase "A"
-		Validator:  validator,  // Correctly assign validator
+		AuthInPort: authInPort,
+		Validator:  validator,
 	}
 }
 
+// @BasePath /api/v1
+
+// PingExample godoc
+// @Summary ping account
+// @Schemes
+// @Description do ping
+// @Tags portal-api
+// @Accept json
+// @Produce json
+// @Success 200 {string} Token created successfully
+// @Router /auth/saveToken [post]
+// @Param saveToken body authRequest true "saveToken Info"
 func (c *AuthController) SaveToken(ctx *gin.Context) {
-	var authRequest struct {
-		Token string `json:"token" binding:"required,min=8"`
-	}
+	var authRequest authRequest
 
 	if err := validation.ValidateRequest(ctx, c.Validator, &authRequest); err != nil {
 		return

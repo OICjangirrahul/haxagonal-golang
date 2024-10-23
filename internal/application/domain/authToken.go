@@ -1,5 +1,5 @@
 package domain
 
 type AuthToken struct {
-    Token string 
+	Token string
 }

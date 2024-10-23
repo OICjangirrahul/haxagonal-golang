@@ -1,41 +1,64 @@
 package config
 
 import (
-    "os"
+	"fmt"
+	"os"
+	"strconv"
 
-    "gopkg.in/yaml.v2"
+	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v2"
 )
 
 const configPath = "config/config.yml"
 
 type Config struct {
-    Server struct {
-        Port string `yaml:"port"`
-    } `yaml:"server"`
+	Server struct {
+		Port string `yaml:"port"`
+	} `yaml:"server"`
 
-    Database struct {
-        DSN string `yaml:"dsn"`
-    } `yaml:"database"`
+	Database struct {
+		DSN string `yaml:"dsn"`
+	} `yaml:"database"`
 
 	Redis struct {
-		Addr     string `yaml:"addr"`     
-		Password string `yaml:"password"` 
-		DB       int    `yaml:"db"`    
+		Addr     string `yaml:"addr"`
+		Password string `yaml:"password"`
+		DB       int    `yaml:"db"`
 	} `yaml:"redis"`
 }
+
 var Cfg Config
 
 func ReadConfig() {
-	f, err := os.Open(configPath)
+	err := godotenv.Load()
 	if err != nil {
-		panic(err)
+		fmt.Println("Error loading .env file, defaulting to system env variables")
 	}
-	defer f.Close()
 
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&Cfg)
-
+	data, err := os.ReadFile(configPath)
 	if err != nil {
-		panic(err)
+		panic(fmt.Sprintf("Failed to read config file: %v", err))
 	}
+
+	configText := os.ExpandEnv(string(data))
+
+	err = yaml.Unmarshal([]byte(configText), &Cfg)
+	if err != nil {
+		panic(fmt.Sprintf("Failed to parse config: %v", err))
+	}
+
+	Cfg.Server.Port = getEnv("PORT", Cfg.Server.Port)
+	Cfg.Database.DSN = getEnv("DSN", Cfg.Database.DSN)
+	Cfg.Redis.Addr = getEnv("REDIS_ADDR", Cfg.Redis.Addr)
+	Cfg.Redis.Password = getEnv("REDIS_PASSWORD", Cfg.Redis.Password)
+	if db, exists := os.LookupEnv("REDIS_DB"); exists {
+		Cfg.Redis.DB, _ = strconv.Atoi(db)
+	}
+}
+
+func getEnv(key, fallback string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+	return fallback
 }

@@ -2,12 +2,14 @@ version: "3.8"
 
 services:
   app:
-    container_name: api
+    container_name: portal-api
     build:
       context: .
       dockerfile: docker/Dockerfile
     ports:
-      - "5000:5000"
+      - "${PORT}:${PORT}"
+    environment:
+      - PORT=${PORT}
     volumes:
       - .:/app
     networks:
@@ -17,7 +19,7 @@ services:
         condition: service_healthy # Wait for Redis to be healthy
 
   redis:
-    container_name: api-redis
+    container_name: portal-api-redis
     image: "redis:latest"
     ports:
       - "6379:6379"

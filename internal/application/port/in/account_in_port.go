@@ -1,5 +1,5 @@
 package in
 
 type AccountInPort interface {
-    CreateAccount(username, password string) error
+	CreateAccount(username, password string) error
 }
